@@ -3,22 +3,27 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
-<title>LINN — Proposta para S2T/TOTVS</title>
+<title>LINN — the game · Proposta para TOTVS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
+    /* Game-style palette (matches LINN game) */
     --white: #FFFFFF;
-    --bg: #212121;
-    --bg-card: #303030;
-    --bg-card2: #2A2A2A;
-    --green: #9ACD32;
-    --blue: #29B6F6;
-    --red: #C62828;
-    --yellow: #FDD835;
-    --gray-light: #ADADAD;
-    --gray-mid: #78909C;
+    --bg: #03050a;
+    --bg-card: #0a1024;
+    --bg-card2: #050a18;
+    --cyan: #4dd0e1;       /* LINN puppy / primary HUD */
+    --orange: #ffab40;     /* targeting / CTA / Coder */
+    --purple: #aa55ff;     /* utility / special */
+    --green: #00ff88;      /* success / correct */
+    --red: #ff5555;        /* enemy / wrong */
+    --yellow: #ffeb3b;     /* highlights */
+    --gray-light: #b0bec5;
+    --gray-mid: #546e7a;
+    /* Legacy aliases (keep old slides working until each is redone) */
+    --blue: var(--cyan);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -28,7 +33,9 @@
     font-family: 'Inter', sans-serif;
     overflow: hidden;
     user-select: none;
+    cursor: crosshair;
   }
+  button, a, input { cursor: crosshair; }
 
   /* Stage = locked 16:9 frame, scaled to fit viewport */
   #stage {
@@ -773,18 +780,270 @@
     transition: all 0.2s;
   }
   #home-btn:hover { color: var(--green); border-color: var(--green); }
-  #hint-mobile {
+  /* Header logo (centered, all slides) */
+  #header-logo {
     position: fixed;
-    bottom: 16px; right: 16px;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
-    color: var(--gray-mid);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    background: rgba(33,33,33,0.85);
-    padding: 0.4em 0.8em;
-    border: 1px solid var(--gray-mid);
+    height: 26px;
+    opacity: 0.75;
     pointer-events: none;
-    opacity: 0.7;
+    filter: drop-shadow(0 0 8px rgba(77,208,225,0.4));
+  }
+
+  /* ============= START button (slide 1) ============= */
+  .start-wrap {
+    text-align: center;
+    margin-top: 1.2em;
+  }
+  .start-btn {
+    display: inline-block;
+    padding: 1em 3.5em;
+    background: transparent;
+    color: var(--orange);
+    border: 2px solid var(--orange);
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.8em;
+    letter-spacing: 0.5em;
+    cursor: crosshair;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 0 30px rgba(255,171,64,0.4),
+                inset 0 0 20px rgba(255,171,64,0.1);
+    animation: startPulse 1.6s infinite;
+    transition: all 0.2s;
+  }
+  .start-btn:hover {
+    background: var(--orange);
+    color: var(--bg);
+    transform: scale(1.05);
+    box-shadow: 0 0 60px rgba(255,171,64,0.9);
+  }
+  .start-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+    animation: lightsweep 2.6s infinite;
+  }
+  @keyframes lightsweep {
+    0%   { left: -100%; }
+    100% { left: 200%; }
+  }
+  @keyframes startPulse {
+    0%, 100% {
+      box-shadow: 0 0 30px rgba(255,171,64,0.4), inset 0 0 20px rgba(255,171,64,0.1);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 60px rgba(255,171,64,0.9), inset 0 0 30px rgba(255,171,64,0.25);
+      transform: scale(1.03);
+    }
+  }
+  /* "by TOTVS" lockup */
+  .by-totvs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .by-totvs img {
+    height: 1.4em;
+    vertical-align: middle;
+    filter: brightness(1.1) drop-shadow(0 0 6px rgba(77,208,225,0.3));
+  }
+  .totvs-placeholder {
+    font-family: 'Russo One', sans-serif;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    border: 1px solid var(--cyan);
+    padding: 0.15em 0.6em;
+    font-size: 0.9em;
+  }
+
+  /* ============= TARGET ZONES (slide 2 interactive) ============= */
+  .target-arena {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2em;
+    margin-top: 1em;
+    align-items: center;
+  }
+  .target-zone {
+    position: relative;
+    padding: 2.5em 2em;
+    border: 2px dashed var(--gray-mid);
+    background: rgba(10, 16, 36, 0.5);
+    cursor: crosshair;
+    transition: all 0.18s;
+    text-align: center;
+    min-height: 18em;
+    display: flex; flex-direction: column;
+    justify-content: center;
+  }
+  .target-zone .reticle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110%;
+    height: 110%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .target-zone .reticle::before,
+  .target-zone .reticle::after {
+    content: '';
+    position: absolute;
+    background: var(--orange);
+    box-shadow: 0 0 8px var(--orange);
+  }
+  .target-zone .reticle::before {
+    top: 0; left: 50%;
+    width: 1px; height: 100%;
+  }
+  .target-zone .reticle::after {
+    top: 50%; left: 0;
+    width: 100%; height: 1px;
+  }
+  .target-zone .corners-tg {
+    position: absolute; inset: 8px;
+    pointer-events: none;
+  }
+  .target-zone .corners-tg span {
+    position: absolute;
+    width: 16px; height: 16px;
+    border: 2px solid var(--gray-mid);
+    transition: all 0.2s;
+  }
+  .target-zone .corners-tg span:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .target-zone .corners-tg span:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; }
+  .target-zone .corners-tg span:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
+  .target-zone .corners-tg span:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .target-zone .lock-label {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Russo One', sans-serif;
+    color: var(--orange);
+    font-size: 0.75em;
+    letter-spacing: 0.3em;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .target-zone .target-label {
+    font-family: 'Russo One', sans-serif;
+    color: var(--gray-light);
+    font-size: 0.85em;
+    letter-spacing: 0.3em;
+    margin-bottom: 1em;
+  }
+  .target-zone .target-text {
+    font-family: 'Russo One', sans-serif;
+    color: var(--white);
+    font-size: 1.4em;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+  }
+  .target-zone .target-icon {
+    font-size: 3em;
+    margin-bottom: 0.4em;
+    color: var(--gray-mid);
+    transition: color 0.2s;
+  }
+
+  .target-zone:hover {
+    transform: scale(1.04);
+    border-color: var(--orange);
+    border-style: solid;
+    background: rgba(255, 171, 64, 0.08);
+    box-shadow: 0 0 30px rgba(255,171,64,0.4),
+                inset 0 0 20px rgba(255,171,64,0.1);
+  }
+  .target-zone:hover .reticle { opacity: 1; animation: reticleSpin 4s linear infinite; }
+  @keyframes reticleSpin {
+    from { transform: translate(-50%, -50%) rotate(0); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+  .target-zone:hover .corners-tg span {
+    border-color: var(--orange);
+    box-shadow: 0 0 8px var(--orange);
+    width: 22px; height: 22px;
+  }
+  .target-zone:hover .lock-label { opacity: 1; }
+  .target-zone:hover .target-icon { color: var(--orange); }
+
+  .target-zone.hit-wrong {
+    animation: shakeWrong 0.5s;
+    border-color: var(--red) !important;
+    background: rgba(255, 85, 85, 0.15);
+  }
+  @keyframes shakeWrong {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-12px); }
+    40%      { transform: translateX(10px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(4px); }
+  }
+  .target-zone.hit-correct {
+    animation: explodeRight 0.6s forwards;
+    border-color: var(--green) !important;
+    background: rgba(0, 255, 136, 0.2);
+    box-shadow: 0 0 80px rgba(0,255,136,0.9);
+  }
+  @keyframes explodeRight {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.15); }
+    100% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  .target-question {
+    font-family: 'Russo One', sans-serif;
+    color: var(--cyan);
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.4em;
+    text-shadow: 0 0 12px rgba(77,208,225,0.5);
+  }
+  .target-sub {
+    text-align: center;
+    color: var(--gray-light);
+    font-size: 0.95em;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.4em;
+  }
+  /* Bullet animation overlay */
+  #bullet-fx {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1500;
+  }
+
+  /* Feedback overlay */
+  #shoot-feedback {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1600;
+    font-family: 'Russo One', sans-serif;
+    font-size: 4em;
+    letter-spacing: 0.3em;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #shoot-feedback.miss   { color: var(--red); text-shadow: 0 0 30px var(--red); animation: feedbackPop 1s; }
+  #shoot-feedback.hit    { color: var(--green); text-shadow: 0 0 30px var(--green); animation: feedbackPop 1s; }
+  @keyframes feedbackPop {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
   }
 
   /* Loading overlay — 4s gamer-style boot sequence */
@@ -892,7 +1151,10 @@
   <div class="booting" id="bootMsg">> conectando à rede neural…</div>
 </div>
 
+<img id="header-logo" src="img/realgames-logo.png" alt="Real Games Studio" />
 <button id="home-btn" title="Início">↺ INÍCIO</button>
+<div id="bullet-fx"></div>
+<div id="shoot-feedback"></div>
 
 <div id="stage">
   <canvas id="fx-canvas"></canvas>
@@ -902,42 +1164,56 @@
   <div class="corner br"></div>
   <div id="deck">
 
-    <!-- ============ SLIDE 1: COVER ============ -->
-    <section class="slide cover" data-bg="img/Linn cover.png">
+    <!-- ============ SLIDE 1: COVER (centered start menu) ============ -->
+    <section class="slide cover" data-bg="img/Linn cover 2.png">
       <div class="overlay"></div>
-      <div class="content">
-        <div class="cover-logos">
-          <div class="logo-placeholder">S2T · TOTVS</div>
-          <div class="logo-placeholder">REAL GAMES</div>
+      <div class="content" style="justify-content: center; align-items: center; text-align: center;">
+        <div class="center-block" style="flex: 0; align-items: center;">
+          <div class="cover-title" style="font-size: 7em;">LINN</div>
+          <div style="font-family:'Russo One',sans-serif; color: var(--cyan); font-size: 1.4em; letter-spacing: 0.5em; margin-top: -0.5em; text-shadow: 0 0 12px rgba(77,208,225,0.6);">— THE GAME —</div>
+          <div class="cover-sub" style="margin-top: 1.2em; font-size: 1.1em; letter-spacing: 0.15em;">
+            um jogo interativo em homenagem aos<br>
+            <strong style="color: var(--orange);">profissionais de TI</strong>
+            <span class="by-totvs" style="margin-left: 0.6em; font-size: 0.8em;">
+              by
+              <img src="img/totvs-logo.png" alt="TOTVS"
+                   onerror="this.outerHTML='<span class=&quot;totvs-placeholder&quot;>TOTVS</span>'" />
+            </span>
+          </div>
+          <div class="start-wrap">
+            <button class="start-btn" id="start-btn">COMEÇAR</button>
+          </div>
         </div>
-        <div class="center-block">
-          <div class="cover-title">LINN</div>
-          <div class="cover-sub">Uma experiência interativa para o<br><strong>Dia do Profissional de TI</strong></div>
-        </div>
-        <div class="cover-footer">Proposta comercial · Real Games Studio · Outubro 2026</div>
+        <div class="cover-footer" style="position: absolute; bottom: 1.5em; left: 0; right: 0;">Proposta comercial · Real Games Studio · Outubro 2026</div>
       </div>
     </section>
 
-    <!-- ============ SLIDE 2: O DESAFIO ============ -->
-    <section class="slide">
-      <div class="tag red">O DESAFIO</div>
-      <h1 class="h1">Como celebrar o profissional de TI numa era em que a IA é central?</h1>
-      <div class="accent-line red"></div>
-      <div class="grid-2" style="margin-top: 1em;">
-        <div class="card red">
-          <div class="ctitle">PROBLEMA</div>
-          <div class="cdesc">
-            Eventos corporativos de RH costumam ser <strong>genéricos demais</strong> para engajar times técnicos. Profissionais de TI são frequentemente celebrados de forma protocolar, sem reconhecer sua relação real com tecnologia.<br><br>
-            A inteligência artificial virou o tema central da indústria, mas raramente é abordada de forma criativa nos rituais corporativos — tratada como ameaça ou jargão de marketing, nunca como <strong>parceira de trabalho</strong>.
-          </div>
+    <!-- ============ SLIDE 2: TUTORIAL — escolha + tiro ============ -->
+    <section class="slide" data-interactive="true">
+      <div class="target-question">QUAL É A SUA VERDADE?</div>
+      <div class="target-sub">▼ MIRE E ATIRE NA OPÇÃO QUE VOCÊ ACREDITA ▼</div>
+
+      <div class="target-arena">
+        <div class="target-zone" data-correct="false" data-feedback-text="EVENTOS GENÉRICOS NÃO ENGAJAM">
+          <div class="corners-tg"><span></span><span></span><span></span><span></span></div>
+          <div class="reticle"></div>
+          <div class="lock-label">◉ ALVO 1</div>
+          <div class="target-icon">⚠</div>
+          <div class="target-label">OPÇÃO A</div>
+          <div class="target-text">A IA está roubando<br>o trabalho dos devs</div>
         </div>
-        <div class="card green">
-          <div class="ctitle">A SOLUÇÃO</div>
-          <div class="cdesc">
-            <strong>LINN</strong> é um jogo web onde o profissional de TI vira protagonista de uma narrativa sci-fi épica e interage com IA pela mecânica de <strong>prompt</strong> — exatamente como faz no dia a dia.<br><br>
-            O game celebra o profissional de TI como <span style="color:var(--green)">arquiteto de intenção</span>: aquele que sabe conversar com a máquina para extrair o melhor dela. Engajamento real, mensagem profunda, experiência memorável.
-          </div>
+        <div class="target-zone" data-correct="true" data-feedback-text="ALVO CORRETO">
+          <div class="corners-tg"><span></span><span></span><span></span><span></span></div>
+          <div class="reticle"></div>
+          <div class="lock-label">◉ ALVO 2</div>
+          <div class="target-icon">◆</div>
+          <div class="target-label">OPÇÃO B</div>
+          <div class="target-text">A IA é uma parceira<br>que potencializa devs</div>
         </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 1.5em; color: var(--gray-mid); font-size: 0.85em; letter-spacing: 0.2em;">
+        ⓘ ESTA É A PREMISSA DO LINN — ATIRE PARA AVANÇAR
       </div>
     </section>
 
@@ -1228,7 +1504,6 @@
 <button id="nav-prev" class="disabled">‹</button>
 <button id="nav-next">›</button>
 <div id="indicator"><span class="cur">01</span> / 11</div>
-<div id="hint-mobile">SETAS · SWIPE · CLIQUE</div>
 
 <script>
 // ============================================================
@@ -1344,6 +1619,192 @@ document.querySelectorAll('[data-bg]').forEach(el => {
 // init nav state
 indicator.querySelector('.cur').textContent = '01';
 prevBtn.classList.add('disabled');
+
+// ============================================================
+// AUDIO — synth game sounds
+// ============================================================
+const audio = {
+  ctx: null, master: null, enabled: true, vol: 0.4,
+  init() {
+    if (this.ctx) return;
+    try {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      this.master = this.ctx.createGain();
+      this.master.gain.value = this.vol;
+      this.master.connect(this.ctx.destination);
+    } catch(e) {}
+  },
+  beep(freq, dur, type='sine', vol=0.1, attack=0.005) {
+    if (!this.ctx || !this.enabled) return;
+    const t0 = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g).connect(this.master);
+    o.start(t0); o.stop(t0 + dur);
+  },
+  sweep(f1, f2, dur, type='sine', vol=0.1) {
+    if (!this.ctx || !this.enabled) return;
+    const t0 = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f1, t0);
+    o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+    g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g).connect(this.master);
+    o.start(t0); o.stop(t0 + dur);
+  },
+  noise(dur, vol=0.1, filterFreq=1000) {
+    if (!this.ctx || !this.enabled) return;
+    const t0 = this.ctx.currentTime;
+    const sr = this.ctx.sampleRate;
+    const len = Math.floor(sr * dur);
+    const buf = this.ctx.createBuffer(1, len, sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random()*2-1;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    const f = this.ctx.createBiquadFilter();
+    f.type='lowpass'; f.frequency.value = filterFreq;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    src.connect(f).connect(g).connect(this.master);
+    src.start(t0); src.stop(t0+dur);
+  },
+  shot()    { this.beep(880, 0.06, 'square', 0.05); this.noise(0.05, 0.04, 1500); },
+  lockOn()  { this.beep(1200, 0.04, 'sine', 0.04); },
+  hitWrong(){ this.noise(0.15, 0.1, 400); this.sweep(220, 80, 0.2, 'sawtooth', 0.08); },
+  hitRight(){
+    [523, 659, 784, 1047].forEach((f,i) => setTimeout(() => this.beep(f, 0.18, 'triangle', 0.08), i*60));
+    this.noise(0.2, 0.08, 2000);
+  },
+  uiClick() { this.beep(440, 0.04, 'square', 0.04); },
+  startBtn(){ this.sweep(440, 880, 0.4, 'triangle', 0.1); },
+};
+
+// ============================================================
+// START button & shooting interaction
+// ============================================================
+const startBtn = document.getElementById('start-btn');
+if (startBtn) {
+  startBtn.addEventListener('click', () => {
+    audio.init();
+    audio.startBtn();
+    setTimeout(() => next(), 300);
+  });
+}
+
+const bulletFx = document.getElementById('bullet-fx');
+const shootFb = document.getElementById('shoot-feedback');
+
+function spawnBullet(toX, toY) {
+  // Bullet from bottom-center of viewport to target point
+  const startX = window.innerWidth / 2;
+  const startY = window.innerHeight - 30;
+  const b = document.createElement('div');
+  b.style.cssText = `
+    position: fixed; left: ${startX}px; top: ${startY}px;
+    width: 6px; height: 14px;
+    background: #ffab40;
+    box-shadow: 0 0 12px #ffab40, 0 0 24px #ffab40;
+    transform: translate(-50%, -50%) rotate(${Math.atan2(toY-startY, toX-startX) + Math.PI/2}rad);
+    transition: left 0.15s linear, top 0.15s linear, opacity 0.1s;
+    pointer-events: none;
+    z-index: 1500;
+  `;
+  bulletFx.appendChild(b);
+  // muzzle flash
+  audio.shot();
+  requestAnimationFrame(() => {
+    b.style.left = toX + 'px';
+    b.style.top = toY + 'px';
+  });
+  setTimeout(() => {
+    b.style.opacity = '0';
+    setTimeout(() => b.remove(), 100);
+  }, 150);
+}
+
+function spawnHitParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 40 + Math.random() * 60;
+    const dx = Math.cos(ang) * dist;
+    const dy = Math.sin(ang) * dist;
+    p.style.cssText = `
+      position: fixed; left: ${x}px; top: ${y}px;
+      width: 5px; height: 5px;
+      background: ${color};
+      box-shadow: 0 0 8px ${color};
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.6s cubic-bezier(0.2,.8,.2,1), opacity 0.6s;
+      pointer-events: none;
+      z-index: 1500;
+    `;
+    bulletFx.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transform = `translate(${dx-2.5}px, ${dy-2.5}px)`;
+      p.style.opacity = '0';
+    });
+    setTimeout(() => p.remove(), 650);
+  }
+}
+
+function showFeedback(type, text) {
+  shootFb.className = type;
+  shootFb.textContent = text;
+  shootFb.style.opacity = '0';
+  void shootFb.offsetWidth;
+  shootFb.style.animation = 'none';
+  void shootFb.offsetWidth;
+  shootFb.style.animation = '';
+}
+
+// Wire up target zones (slide 2 and any future interactive)
+function wireTargetZones() {
+  document.querySelectorAll('.target-zone').forEach(zone => {
+    let locked = false;
+    zone.addEventListener('mouseenter', () => {
+      if (locked) return;
+      audio.lockOn();
+    });
+    zone.addEventListener('click', (e) => {
+      if (locked) return;
+      audio.init();
+      const rect = zone.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      spawnBullet(cx, cy);
+      const isCorrect = zone.dataset.correct === 'true';
+      setTimeout(() => {
+        if (isCorrect) {
+          locked = true;
+          zone.classList.add('hit-correct');
+          spawnHitParticles(cx, cy, '#00ff88', 24);
+          audio.hitRight();
+          showFeedback('hit', 'TARGET DESTROYED');
+          // auto advance
+          setTimeout(() => next(), 1400);
+        } else {
+          zone.classList.add('hit-wrong');
+          spawnHitParticles(cx, cy, '#ff5555', 12);
+          audio.hitWrong();
+          showFeedback('miss', 'MISS · ALVO INCORRETO');
+          setTimeout(() => zone.classList.remove('hit-wrong'), 600);
+        }
+      }, 150);
+    });
+  });
+}
+wireTargetZones();
 
 // ============================================================
 // Subtle particle background (digital rain feel)
