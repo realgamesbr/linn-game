@@ -97,12 +97,12 @@
     position: absolute;
     top: 0; left: 0;
     height: 100%;
-    width: 1100%;
+    width: 1000%;
     display: flex;
     transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
   }
   .slide {
-    width: calc(100% / 11);
+    width: calc(100% / 10);
     height: 100%;
     flex-shrink: 0;
     padding: 3.5em 4em;
@@ -534,6 +534,59 @@
   }
   .milestone:nth-child(5) .week { color: var(--red); }
 
+  /* Larger milestone text + scaling for reached state */
+  .milestone .week { font-size: 1.1em; }
+  .milestone .desc { font-size: 0.9em; }
+  .milestone {
+    transition: transform 0.3s, opacity 0.3s;
+    opacity: 0.45;
+  }
+  .milestone.reached {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  .milestone.reached .dot {
+    box-shadow: 0 0 24px currentColor;
+    background: currentColor;
+    color: var(--bg) !important;
+  }
+
+  /* Drag track */
+  .dt-track {
+    position: relative;
+    height: 2.6em;
+    margin: 1em 0 1em;
+  }
+  .dt-handle {
+    position: absolute;
+    top: -1.3em;
+    left: 0%;
+    transform: translate(-50%, 0);
+    width: 3em; height: 3em;
+    border-radius: 50%;
+    background: var(--orange);
+    border: 3px solid var(--white);
+    color: var(--bg);
+    font-size: 1.3em;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab;
+    box-shadow: 0 0 30px rgba(255,171,64,0.8);
+    z-index: 10;
+    user-select: none;
+    transition: box-shadow 0.2s;
+    touch-action: none;
+  }
+  .dt-handle:hover { box-shadow: 0 0 50px rgba(255,171,64,1); }
+  .dt-handle.dragging { cursor: grabbing; box-shadow: 0 0 60px rgba(255,171,64,1); }
+
+  /* Disabled button */
+  .game-btn.disabled-btn {
+    opacity: 0.35;
+    pointer-events: none;
+    box-shadow: none;
+  }
+  .game-btn.disabled-btn::after { display: none; }
+
   /* Pricing */
   .pricing-row {
     display: grid;
@@ -615,6 +668,53 @@
     margin-top: 1em;
   }
 
+  /* Single price card (slide 9) */
+  .single-price-wrap {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1em;
+  }
+  .single-price-card {
+    background: linear-gradient(135deg, rgba(255,235,59,0.06), rgba(10,16,36,0.9));
+    border: 2px solid var(--yellow);
+    padding: 2.4em 3em;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255,235,59,0.3),
+                inset 0 0 30px rgba(255,235,59,0.08);
+    max-width: 30em;
+  }
+  .single-label {
+    font-family: 'Russo One', sans-serif;
+    color: var(--gray-light);
+    font-size: 1em;
+    letter-spacing: 0.4em;
+    margin-bottom: 0.8em;
+  }
+  .single-price-value {
+    font-family: 'Russo One', sans-serif;
+    color: var(--yellow);
+    margin-bottom: 1.2em;
+    text-shadow: 0 0 24px rgba(255,235,59,0.6);
+    letter-spacing: 0.05em;
+  }
+  .single-price-value .currency { font-size: 2em; vertical-align: top; margin-right: 0.1em; }
+  .single-price-value .amount   { font-size: 5em; }
+  .single-price-value .thousands { font-size: 2em; vertical-align: top; }
+  .single-includes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em 1.5em;
+    text-align: left;
+    margin-top: 0.6em;
+  }
+  .single-includes .inc {
+    color: var(--white);
+    font-size: 1em;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
   /* Next steps */
   .steps-row {
     display: flex;
@@ -677,6 +777,34 @@
     box-shadow: 0 0 50px rgba(154,205,50,0.9);
   }
   .cta-wrap { text-align: center; margin-top: auto; }
+
+  /* Final slide spacing — push step circles to middle */
+  .final-spacer { flex: 1; }
+  .final-credits {
+    margin-top: 2em;
+    text-align: center;
+    padding-top: 1.5em;
+    border-top: 1px solid rgba(154, 205, 50, 0.2);
+  }
+  .final-credits .cr-name {
+    font-family: 'Russo One', sans-serif;
+    color: var(--white);
+    font-size: 1.05em;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.2em;
+  }
+  .final-credits .cr-role {
+    color: var(--gray-light);
+    font-size: 0.85em;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.4em;
+  }
+  .final-credits .cr-email {
+    color: var(--cyan);
+    font-family: 'Russo One', sans-serif;
+    font-size: 1em;
+    letter-spacing: 0.1em;
+  }
 
   /* Contact slide */
   .contact-card {
@@ -783,19 +911,70 @@
   /* Header logo (centered, all slides) */
   #header-logo {
     position: fixed;
-    top: 14px; left: 50%;
+    top: 18px; left: 50%;
     transform: translateX(-50%);
     z-index: 100;
-    height: 26px;
-    opacity: 0.75;
+    height: 52px;
+    opacity: 0.85;
     pointer-events: none;
-    filter: drop-shadow(0 0 8px rgba(77,208,225,0.4));
+    filter: drop-shadow(0 0 12px rgba(77,208,225,0.5));
   }
+  /* Make slide content start below the logo so it doesn't overlap */
+  .slide:not(.cover) {
+    padding-top: 6em;
+  }
+
+  /* ============= UNIFIED GAME BUTTON (used per slide) ============= */
+  .game-btn {
+    display: inline-block;
+    padding: 1em 2.8em;
+    background: var(--orange);
+    color: var(--bg);
+    border: 2px solid var(--orange);
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.4em;
+    letter-spacing: 0.3em;
+    cursor: crosshair;
+    box-shadow: 0 0 26px rgba(255,171,64,0.5);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    text-align: center;
+  }
+  .game-btn:hover {
+    background: var(--bg);
+    color: var(--orange);
+    box-shadow: 0 0 50px rgba(255,171,64,1);
+    transform: scale(1.05);
+  }
+  .game-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: lightsweep 3s infinite;
+  }
+  .game-btn.cyan {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 26px rgba(77,208,225,0.5);
+  }
+  .game-btn.cyan:hover { color: var(--cyan); box-shadow: 0 0 50px rgba(77,208,225,1); }
+  .game-btn.green {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+    box-shadow: 0 0 26px rgba(0,255,136,0.5);
+  }
+  .game-btn.green:hover { color: var(--green); box-shadow: 0 0 50px rgba(0,255,136,1); }
+  .btn-row { text-align: center; margin-top: auto; padding-top: 1.5em; }
 
   /* ============= START button (slide 1) ============= */
   .start-wrap {
     text-align: center;
-    margin-top: 1.2em;
+    margin-top: 4em;
   }
   .start-btn {
     display: inline-block;
@@ -862,6 +1041,89 @@
     padding: 0.15em 0.6em;
     font-size: 0.9em;
   }
+
+  /* ============= BRIEFING SLIDE (slide 3) ============= */
+  .briefing-slide {
+    padding: 0 !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .briefing-overlay {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(3,5,10,0.45) 30%, rgba(3,5,10,0.95) 80%),
+      linear-gradient(180deg, rgba(3,5,10,0.7), rgba(3,5,10,0.6));
+    z-index: 1;
+  }
+  .briefing-content {
+    position: absolute; inset: 0;
+    padding: 7em 5em 4em;
+    z-index: 2;
+    display: flex; flex-direction: column;
+    justify-content: center;
+  }
+  .briefing-text {
+    color: var(--gray-light);
+    font-size: 1.4em;
+    line-height: 1.8;
+    max-width: 30ch;
+    margin-top: 1em;
+  }
+  .briefing-text p { margin-bottom: 0.8em; }
+  .briefing-text strong { color: var(--white); }
+  .briefing-text .hl { color: var(--orange); font-weight: 700; }
+  .accent-line.cyan-line { background: var(--cyan); width: 8em; }
+
+  /* ============= MECHANIC SLIDE (slide 4) — image as background ============= */
+  .mech-slide {
+    padding: 0 !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .mech-overlay {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(3,5,10,0.55) 30%, rgba(3,5,10,0.97) 85%),
+      linear-gradient(180deg, rgba(3,5,10,0.5), rgba(3,5,10,0.85));
+    z-index: 1;
+  }
+  .mech-content {
+    position: absolute; inset: 0;
+    padding: 7em 5em 4em;
+    z-index: 2;
+    display: flex; flex-direction: column;
+  }
+  .mech-stack {
+    display: flex; flex-direction: column;
+    gap: 1em;
+    margin-top: 1em;
+    max-width: 36em;
+  }
+  .mech-step {
+    background: rgba(10, 16, 36, 0.85);
+    border-left: 4px solid var(--cyan);
+    padding: 1em 1.4em;
+    backdrop-filter: blur(4px);
+  }
+  .mech-step:nth-child(2) { border-color: var(--orange); }
+  .mech-step:nth-child(3) { border-color: var(--purple); }
+  .mech-step .step-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.4em;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.3em;
+  }
+  .mech-step:nth-child(2) .step-title { color: var(--orange); }
+  .mech-step:nth-child(3) .step-title { color: var(--purple); }
+  .mech-step .step-desc {
+    color: var(--gray-light);
+    font-size: 1.1em;
+    line-height: 1.5;
+  }
+  .mech-step .step-desc strong { color: var(--white); }
 
   /* ============= TARGET ZONES (slide 2 interactive) ============= */
   .target-arena {
@@ -1076,17 +1338,25 @@
   #loader.hidden { opacity: 0; pointer-events: none; }
   #loader .ascii {
     font-family: 'Russo One', sans-serif;
-    color: var(--green);
-    font-size: 60px;
+    color: var(--orange);
+    font-size: 72px;
     letter-spacing: 0.1em;
-    margin-bottom: 30px;
-    text-shadow: 0 0 30px rgba(154,205,50,0.6), 0 0 60px rgba(154,205,50,0.3);
+    margin-bottom: 6px;
+    text-shadow: 0 0 30px rgba(255,171,64,0.6), 0 0 60px rgba(255,171,64,0.3);
     animation: glitchTitle 3s infinite;
   }
+  #loader .ascii-sub {
+    font-family: 'Russo One', sans-serif;
+    color: var(--cyan);
+    font-size: 18px;
+    letter-spacing: 0.5em;
+    margin-bottom: 30px;
+    text-shadow: 0 0 12px rgba(77,208,225,0.6);
+  }
   @keyframes glitchTitle {
-    0%, 90%, 100% { transform: translateX(0); text-shadow: 0 0 30px rgba(154,205,50,0.6), 0 0 60px rgba(154,205,50,0.3); }
-    91% { transform: translateX(-3px); text-shadow: 3px 0 0 var(--red), -3px 0 0 var(--blue); }
-    93% { transform: translateX(3px); text-shadow: -3px 0 0 var(--red), 3px 0 0 var(--blue); }
+    0%, 90%, 100% { transform: translateX(0); text-shadow: 0 0 30px rgba(255,171,64,0.6), 0 0 60px rgba(255,171,64,0.3); }
+    91% { transform: translateX(-3px); text-shadow: 3px 0 0 var(--red), -3px 0 0 var(--cyan); }
+    93% { transform: translateX(3px); text-shadow: -3px 0 0 var(--red), 3px 0 0 var(--cyan); }
     95% { transform: translateX(0); }
   }
   #loader .lbl {
@@ -1145,6 +1415,7 @@
 
 <div id="loader">
   <div class="ascii">LINN</div>
+  <div class="ascii-sub">— THE GAME —</div>
   <div class="lbl">INICIALIZANDO</div>
   <div class="progress-wrap"><div class="progress-bar"></div></div>
   <div class="pct" id="loaderPct">0%</div>
@@ -1217,284 +1488,272 @@
       </div>
     </section>
 
-    <!-- ============ SLIDE 3: O CONCEITO ============ -->
-    <section class="slide">
-      <div class="tag">O CONCEITO</div>
-      <h1 class="h1">Um shooter web onde a IA é sua melhor amiga</h1>
-      <div class="accent-line"></div>
-      <div class="concept-row" style="margin-top: 1em;">
-        <div class="left img-slot" style="background-image: url('img/Linn start.png');"></div>
-        <div class="right">
-          <div class="concept-text">
-            <p><span class="hl">Ano 2089.</span> A rede global colapsou. Um vírus consciente — <strong>Zero-Day</strong> — está consumindo o mundo digital.</p>
-            <p>Você é um <strong>Coder</strong>, profissional de TI elite, capaz de mergulhar fisicamente na rede.</p>
-            <p>Ao seu lado corre <strong>LINN</strong> — Legacy Intelligent Neural Network. Uma IA amiga que aprende novas palavras a cada wave do jogo.</p>
-            <p>Combine palavras de formas <span class="hl">criativas</span> — cada combinação cria uma habilidade única.</p>
-          </div>
-          <div class="badges">
-            <div class="badge">WEB-BASED</div>
-            <div class="badge blue">MOBILE + DESKTOP</div>
-            <div class="badge yellow">SEM INSTALAÇÃO</div>
-            <div class="badge">5–10 MIN/SESSÃO</div>
-          </div>
+    <!-- ============ SLIDE 3: BRIEFING ============ -->
+    <section class="slide briefing-slide" data-bg="img/Linn start.png">
+      <div class="briefing-overlay"></div>
+      <div class="briefing-content">
+        <div class="tag" style="font-size: 1.3em;">▸ MISSION BRIEFING</div>
+        <h1 class="h1" style="font-size: 3.4em; max-width: 14ch;">A IA é sua nova<br><span style="color: var(--cyan);">melhor parceira</span></h1>
+        <div class="accent-line cyan-line"></div>
+        <div class="briefing-text">
+          <p><span class="hl">Ano 2089.</span> A rede global colapsou. Um vírus consciente — <strong>Zero-Day</strong> — consome o mundo digital.</p>
+          <p>Você é um <strong>Coder</strong>. Ao seu lado corre <strong>LINN</strong>, uma IA amiga que aprende palavras a cada wave.</p>
+          <p>Combine palavras de formas <span class="hl">criativas</span> — cada uma cria uma habilidade única.</p>
+        </div>
+        <div class="btn-row">
+          <button class="game-btn" onclick="next()">▸ ACEITAR MISSÃO</button>
         </div>
       </div>
     </section>
 
-    <!-- ============ SLIDE 4: A MECÂNICA DO PROMPT ============ -->
-    <section class="slide">
-      <div class="tag yellow">MECÂNICA CENTRAL</div>
-      <h1 class="h1 small">Prompts são a alma das IAs</h1>
-      <div class="accent-line yellow"></div>
-      <div class="mech-img" style="background-image: url('img/Linn prompt.png');"></div>
-      <div class="grid-3" style="flex: 0; margin-top: 0.5em;">
-        <div class="card green">
-          <div class="ctitle">1 · BULLET TIME</div>
-          <div class="cdesc">Aperte SPACE ou o botão ◆ e o tempo congela completamente. Você tem <strong>10 segundos</strong> para pensar com calma.</div>
+    <!-- ============ SLIDE 4: MECÂNICA — image as bg + stacked ============ -->
+    <section class="slide mech-slide" data-bg="img/Linn prompt.png">
+      <div class="mech-overlay"></div>
+      <div class="mech-content">
+        <div class="tag" style="color: var(--orange); font-size: 1.3em;">▸ MECÂNICA CENTRAL</div>
+        <h1 class="h1" style="font-size: 3.2em;">Prompts são a <span style="color: var(--orange);">alma das IAs</span></h1>
+        <div class="accent-line" style="background: var(--orange);"></div>
+        <div class="mech-stack">
+          <div class="mech-step">
+            <div class="step-title">1 · BULLET TIME</div>
+            <div class="step-desc">Aperte <strong>SPACE</strong> ou o botão ◆ — o tempo congela. Você tem <strong>10 segundos</strong> para pensar.</div>
+          </div>
+          <div class="mech-step">
+            <div class="step-title">2 · COMBINAÇÃO</div>
+            <div class="step-desc">Escolha <strong>1 ou 2 palavras</strong> do vocabulário da LINN. Cada combinação produz um efeito único.</div>
+          </div>
+          <div class="mech-step">
+            <div class="step-title">3 · EXECUÇÃO</div>
+            <div class="step-desc">A LINN materializa o prompt em uma habilidade: ataques, escudos, invisibilidade, multishot…</div>
+          </div>
         </div>
-        <div class="card blue">
-          <div class="ctitle">2 · COMBINAÇÃO</div>
-          <div class="cdesc">Escolha 1 ou 2 palavras do vocabulário aprendido pela LINN. Cada combinação produz um <strong>efeito tático único</strong>.</div>
-        </div>
-        <div class="card yellow">
-          <div class="ctitle">3 · EXECUÇÃO</div>
-          <div class="cdesc">A LINN materializa o prompt em uma habilidade visual: ataques teleguiados, escudos, invisibilidade, multiplicação de tiros…</div>
+        <div class="btn-row">
+          <button class="game-btn" onclick="next()">▸ EXECUTAR</button>
         </div>
       </div>
-      <div class="mech-quote">"Toda IA nasce de um prompt. Que tipo de IA você vai criar?"</div>
     </section>
 
     <!-- ============ SLIDE 5: PROGRESSÃO ============ -->
     <section class="slide">
-      <div class="tag blue">PROGRESSÃO</div>
-      <h1 class="h1 small">LINN evolui com você — assim como a IA aprende com seu time</h1>
-      <div class="accent-line blue"></div>
-      <div class="prog-row">
+      <div class="tag" style="color: var(--cyan); font-size: 1.3em;">▸ PROGRESSÃO</div>
+      <h1 class="h1" style="font-size: 3em;">LINN evolui com você</h1>
+      <div class="accent-line cyan-line"></div>
+      <div class="prog-row" style="margin-top: 1.5em;">
         <div class="col">
-          <div class="prog-img img-slot" style="background-image: url('img/Linn fase1.png');"></div>
-          <div class="prog-cap"><strong>WAVE INICIAL</strong> · vocabulário básico (2 palavras: atacar, proteger)</div>
+          <div class="prog-img img-slot" style="background-image: url('img/Linn fase1.png'); height: 16em;"></div>
+          <div class="prog-cap" style="font-size: 1.1em; padding: 1em;"><strong>WAVE INICIAL</strong><br>vocabulário básico — 2 palavras</div>
         </div>
         <div class="col">
-          <div class="prog-img img-slot" style="background-image: url('img/Linn fase2.png');"></div>
-          <div class="prog-cap"><strong>WAVE AVANÇADA</strong> · 10 palavras + combos especiais (ECHO + híbridos)</div>
+          <div class="prog-img img-slot" style="background-image: url('img/Linn fase2.png'); height: 16em;"></div>
+          <div class="prog-cap" style="font-size: 1.1em; padding: 1em;"><strong>WAVE AVANÇADA</strong><br>10 palavras + combos ECHO</div>
         </div>
       </div>
-      <div class="word-cats">
-        <div class="word-cat">
-          <div class="label">ATAQUE</div>
-          <div class="words">atacar · explodir</div>
+      <div class="word-cats" style="margin-top: 1.5em;">
+        <div class="word-cat" style="padding: 1em 1.2em;">
+          <div class="label" style="font-size: 1em;">ATAQUE</div>
+          <div class="words" style="font-size: 1em;">atacar · explodir</div>
         </div>
-        <div class="word-cat">
-          <div class="label">ESCUDO</div>
-          <div class="words">proteger · barreira</div>
+        <div class="word-cat" style="padding: 1em 1.2em;">
+          <div class="label" style="font-size: 1em;">ESCUDO</div>
+          <div class="words" style="font-size: 1em;">proteger · barreira</div>
         </div>
-        <div class="word-cat">
-          <div class="label">UTILITY</div>
-          <div class="words">invisibilidade · rebater · lentidão · multiplicar</div>
+        <div class="word-cat" style="padding: 1em 1.2em;">
+          <div class="label" style="font-size: 1em;">UTILITY</div>
+          <div class="words" style="font-size: 1em;">invisibilidade · rebater · lentidão · multiplicar</div>
         </div>
-        <div class="word-cat">
-          <div class="label">SPECIAL</div>
-          <div class="words">purgar · imortal</div>
+        <div class="word-cat" style="padding: 1em 1.2em;">
+          <div class="label" style="font-size: 1em;">SPECIAL</div>
+          <div class="words" style="font-size: 1em;">purgar · imortal</div>
         </div>
+      </div>
+      <div class="btn-row">
+        <button class="game-btn cyan" onclick="next()">▸ AVANÇAR</button>
       </div>
     </section>
 
     <!-- ============ SLIDE 6: CUSTOMIZAÇÕES TOTVS ============ -->
     <section class="slide">
-      <div class="tag">CUSTOMIZAÇÃO</div>
-      <h1 class="h1">Pensado para o universo TOTVS</h1>
+      <div class="tag" style="color: var(--orange); font-size: 1.3em;">▸ CUSTOMIZAÇÃO</div>
+      <h1 class="h1" style="font-size: 3em;">Pensado para o<br>universo <span style="color: var(--cyan);">TOTVS</span></h1>
       <div class="accent-line"></div>
-      <div class="grid-2x2" style="margin-top: 0.6em;">
-        <div class="card green">
-          <div class="ctitle">BRANDING TOTVS</div>
-          <div class="cdesc">Logo TOTVS na tela inicial, cinematics e UI do jogo. Avatar do <strong>Coder</strong> com elementos visuais inspirados na identidade TOTVS. Paleta de cores e tipografia podem alinhar à marca.</div>
+      <div class="grid-2x2" style="margin-top: 1em; gap: 1.4em;">
+        <div class="card" style="border-color: var(--cyan); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--cyan); font-size: 1.4em;">BRANDING TOTVS</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.65;">Logo TOTVS na tela inicial e cinematics. Avatar do <strong>Coder</strong> com elementos visuais TOTVS. Paleta alinhada à marca.</div>
         </div>
-        <div class="card blue">
-          <div class="ctitle">VOCABULÁRIO TEMATIZADO</div>
-          <div class="cdesc">Palavras-chave do universo TOTVS substituem as padrão:<br>
-            <strong>protheus</strong> (escudo) · <strong>fluig</strong> (utility) · <strong>rm</strong> (ataque)<br>
-            <strong>winthor</strong> (escudo) · <strong>datasul</strong> (analytics)<br>
-            <strong>engage</strong> (utility) · <strong>carol</strong> (special)
-          </div>
+        <div class="card" style="border-color: var(--orange); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--orange); font-size: 1.4em;">VOCABULÁRIO TOTVS</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.65;">Palavras do universo TOTVS substituem as padrão: <strong>protheus, fluig, rm, winthor, datasul, engage, carol</strong>.</div>
         </div>
-        <div class="card red">
-          <div class="ctitle">LEADERBOARD INTERNO</div>
-          <div class="cdesc">URL exclusiva para TOTVS (<em>linn.totvs.com</em> ou subpath). Ranking com nome do funcionário e área. Resultados em tempo real durante o Dia do Profissional de TI.</div>
+        <div class="card" style="border-color: var(--purple); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--purple); font-size: 1.4em;">LEADERBOARD INTERNO</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.65;">URL exclusiva TOTVS. Ranking com nome do funcionário e área. Resultados em tempo real no Dia do TI.</div>
         </div>
-        <div class="card yellow">
-          <div class="ctitle">DASHBOARD ADMIN</div>
-          <div class="cdesc">Métricas para RH e Marketing: jogadores únicos, número de partidas, prompts mais usados, duração média de sessão, palavras mais combinadas, tempo médio até o game over.</div>
+        <div class="card" style="border-color: var(--yellow); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--yellow); font-size: 1.4em;">DASHBOARD ADMIN</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.65;">Métricas para RH/Marketing: jogadores únicos, partidas, prompts mais usados, duração de sessão.</div>
         </div>
+      </div>
+      <div class="btn-row">
+        <button class="game-btn" onclick="next()">▸ AVANÇAR</button>
       </div>
     </section>
 
     <!-- ============ SLIDE 7: ENTREGÁVEIS ============ -->
     <section class="slide">
-      <div class="tag blue">ENTREGÁVEIS</div>
-      <h1 class="h1">O que está incluso</h1>
-      <div class="accent-line blue"></div>
-      <div class="grid-3" style="margin-top: 1em;">
-        <div class="card green">
-          <div class="ctitle">JOGO</div>
-          <div class="cdesc">
-            • Game web com qualidade de produção<br>
-            • HTML5 + JS (sem instalação)<br>
-            • Customização visual TOTVS<br>
-            • URL exclusiva totvs.com<br>
-            • Compatível mobile + desktop<br>
-            • 8 waves progressivas<br>
-            • Sistema de prompt com vocabulário tematizado
+      <div class="tag" style="color: var(--cyan); font-size: 1.3em;">▸ ENTREGÁVEIS</div>
+      <h1 class="h1" style="font-size: 3em;">O que está incluso</h1>
+      <div class="accent-line cyan-line"></div>
+      <div class="grid-3" style="margin-top: 1.5em; gap: 1.4em;">
+        <div class="card" style="border-color: var(--cyan); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--cyan); font-size: 1.4em;">⚙ GAME DESIGN</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.7;">
+            Conceito completo, mecânicas, narrativa, balanceamento de 8 waves progressivas, sistema de prompt e vocabulário tematizado TOTVS.
           </div>
         </div>
-        <div class="card blue">
-          <div class="ctitle">OPERAÇÃO</div>
-          <div class="cdesc">
-            • Hospedagem dedicada por 90 dias<br>
-            • Suporte técnico durante a campanha<br>
-            • Atualizações de balanceamento<br>
-            • Backup automático de leaderboard<br>
-            • SLA de 99% uptime<br>
-            • Monitoramento de performance
+        <div class="card" style="border-color: var(--orange); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--orange); font-size: 1.4em;">🎨 ARTE</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.7;">
+            Direção de arte, ilustrações de personagens, cinematics, branding TOTVS integrado, UI/UX completa do jogo.
           </div>
         </div>
-        <div class="card yellow">
-          <div class="ctitle">COMUNICAÇÃO</div>
-          <div class="cdesc">
-            • Templates de email para divulgação interna<br>
-            • Mensagens prontas para Teams/Slack<br>
-            • Banner para intranet/site<br>
-            • Vídeo teaser de 30 segundos<br>
-            • Card para LinkedIn corporativo<br>
-            • Manual de instruções rápido
+        <div class="card" style="border-color: var(--purple); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--purple); font-size: 1.4em;">🔊 ÁUDIO</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.7;">
+            Trilha sonora, efeitos sonoros sintetizados, feedback áudio completo para gameplay e UI.
+          </div>
+        </div>
+        <div class="card" style="border-color: var(--green); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--green); font-size: 1.4em;">🌐 PUBLICAÇÃO</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.7;">
+            URL exclusiva, hospedagem dedicada, leaderboard interno e dashboard admin com métricas.
+          </div>
+        </div>
+        <div class="card" style="border-color: var(--yellow); padding: 1.6em 1.8em;">
+          <div class="ctitle" style="color: var(--yellow); font-size: 1.4em;">⏱ 3 MESES DE OPERAÇÃO</div>
+          <div class="cdesc" style="font-size: 1.1em; line-height: 1.7;">
+            Manutenção, suporte técnico, ajustes de balanceamento e monitoramento por <strong>90 dias após o lançamento</strong>.
           </div>
         </div>
       </div>
+      <div class="btn-row">
+        <button class="game-btn cyan" onclick="next()">▸ AVANÇAR</button>
+      </div>
     </section>
 
-    <!-- ============ SLIDE 8: CRONOGRAMA ============ -->
+    <!-- ============ SLIDE 8: CRONOGRAMA — drag interaction ============ -->
     <section class="slide">
-      <div class="tag">CRONOGRAMA</div>
-      <h1 class="h1 small">8 semanas até o Dia do Profissional de TI</h1>
+      <div class="tag" style="color: var(--orange); font-size: 1.3em;">▸ CRONOGRAMA</div>
+      <h1 class="h1" style="font-size: 3em;">8 semanas até o<br><span style="color: var(--orange);">19 de outubro</span></h1>
       <div class="accent-line"></div>
-      <div class="timeline">
-        <div class="milestone">
-          <div class="dot">1</div>
-          <div class="week">SEM 1–2</div>
-          <div class="desc">Aprovação do conceito + briefing TOTVS</div>
+      <div style="text-align: center; color: var(--cyan); font-family: 'Russo One', sans-serif; font-size: 1.1em; letter-spacing: 0.2em; margin: 1.5em 0 0.5em;">
+        ▸ ARRASTE O MARCADOR ATÉ O FIM DA TIMELINE
+      </div>
+      <div class="dt-track" id="dtTrack">
+        <div class="dt-handle" id="dragHandle">⏵</div>
+        <div class="timeline" style="margin-top: 0;">
+          <div class="milestone">
+            <div class="dot">1</div>
+            <div class="week">SEM 1–2</div>
+            <div class="desc">Aprovação + briefing TOTVS</div>
+          </div>
+          <div class="milestone">
+            <div class="dot">2</div>
+            <div class="week">SEM 3–5</div>
+            <div class="desc">Desenvolvimento + branding</div>
+          </div>
+          <div class="milestone">
+            <div class="dot">3</div>
+            <div class="week">SEM 6</div>
+            <div class="desc">Testes + balanceamento</div>
+          </div>
+          <div class="milestone">
+            <div class="dot">4</div>
+            <div class="week">SEM 7</div>
+            <div class="desc">Soft launch interno (beta)</div>
+          </div>
+          <div class="milestone">
+            <div class="dot">5</div>
+            <div class="week">19/10</div>
+            <div class="desc"><strong>LANÇAMENTO</strong><br>Dia do Profissional de TI</div>
+          </div>
         </div>
-        <div class="milestone">
-          <div class="dot">2</div>
-          <div class="week">SEM 3–5</div>
-          <div class="desc">Desenvolvimento + integração branding</div>
-        </div>
-        <div class="milestone">
-          <div class="dot">3</div>
-          <div class="week">SEM 6</div>
-          <div class="desc">Testes + ajustes finais de balanceamento</div>
-        </div>
-        <div class="milestone">
-          <div class="dot">4</div>
-          <div class="week">SEM 7</div>
-          <div class="desc">Soft launch interno (beta com time selecionado)</div>
-        </div>
-        <div class="milestone">
-          <div class="dot">5</div>
-          <div class="week">19/10</div>
-          <div class="desc"><strong>LANÇAMENTO OFICIAL</strong><br>Dia do Profissional de TI</div>
-        </div>
+      </div>
+      <div class="btn-row">
+        <button class="game-btn green ready-btn disabled-btn" onclick="onReadyClick(this)">▸ ESTOU PRONTO</button>
       </div>
     </section>
 
-    <!-- ============ SLIDE 9: INVESTIMENTO ============ -->
+    <!-- ============ SLIDE 9: INVESTIMENTO — single price ============ -->
     <section class="slide">
-      <div class="tag yellow">INVESTIMENTO</div>
-      <h1 class="h1">Pacotes flexíveis</h1>
-      <div class="accent-line yellow"></div>
-      <div class="pricing-row" style="margin-top: 1em;">
-        <div class="pkg green">
-          <div class="pname">ESSENCIAL</div>
-          <div class="price">R$ XX.XXX</div>
-          <ul>
-            <li>Game web completo</li>
-            <li>Branding TOTVS básico</li>
-            <li>Leaderboard interno</li>
-            <li>URL exclusiva</li>
-            <li>30 dias de operação</li>
-          </ul>
-        </div>
-        <div class="pkg featured">
-          <div class="star">RECOMENDADO</div>
-          <div class="pname">COMPLETO</div>
-          <div class="price">R$ XX.XXX</div>
-          <ul>
-            <li>Tudo do Essencial</li>
-            <li>Vocabulário tematizado TOTVS</li>
-            <li>Dashboard admin com métricas</li>
-            <li>Pacote de comunicação interna</li>
-            <li>Vídeo teaser 30s</li>
-            <li>90 dias de operação</li>
-            <li>Suporte prioritário</li>
-          </ul>
-        </div>
-        <div class="pkg blue">
-          <div class="pname">CUSTOMIZADO</div>
-          <div class="price">R$ XX.XXX</div>
-          <ul>
-            <li>Tudo do Completo</li>
-            <li>Integração SSO TOTVS</li>
-            <li>Integração Microsoft Teams</li>
-            <li>Cinematics customizadas</li>
-            <li>Premiação automatizada</li>
-            <li>180 dias de operação</li>
-          </ul>
+      <div class="tag" style="color: var(--yellow); font-size: 1.3em;">▸ INVESTIMENTO</div>
+      <h1 class="h1" style="font-size: 3em;">Um pacote.<br>Um <span style="color: var(--yellow);">desafio</span>.</h1>
+      <div class="accent-line" style="background: var(--yellow);"></div>
+      <div class="single-price-wrap">
+        <div class="single-price-card">
+          <div class="single-label">VALOR TOTAL DO PROJETO</div>
+          <div class="single-price-value">
+            <span class="currency">R$</span>
+            <span class="amount">75</span>
+            <span class="thousands">.000</span>
+          </div>
+          <div class="single-includes">
+            <div class="inc">✓ Game design completo</div>
+            <div class="inc">✓ Arte + identidade visual</div>
+            <div class="inc">✓ Áudio + trilha sonora</div>
+            <div class="inc">✓ Publicação + URL exclusiva</div>
+            <div class="inc">✓ Customização TOTVS</div>
+            <div class="inc">✓ 3 meses de operação</div>
+          </div>
         </div>
       </div>
-      <div class="total-bar">TODOS OS PACOTES INCLUEM HOSPEDAGEM, SUPORTE E ATUALIZAÇÕES</div>
+      <div class="btn-row">
+        <button class="game-btn green" onclick="next()">▸ DESAFIO ACEITO</button>
+      </div>
     </section>
 
-    <!-- ============ SLIDE 10: PRÓXIMOS PASSOS ============ -->
+    <!-- ============ SLIDE 10: PRÓXIMOS PASSOS + CONTATO (final) ============ -->
     <section class="slide next-steps" data-bg="img/Linn cover.png">
       <div class="overlay"></div>
-      <div class="content">
-        <div class="tag">PRÓXIMOS PASSOS</div>
-        <h1 class="h1">Vamos começar?</h1>
+      <div class="content" style="padding: 6em 5em 3em;">
+        <div class="tag" style="font-size: 1.3em;">▸ PRÓXIMOS PASSOS</div>
+        <h1 class="h1" style="font-size: 3em;">Vamos começar?</h1>
         <div class="accent-line"></div>
-        <div class="steps-row">
+
+        <div class="final-spacer"></div>
+
+        <div class="steps-row" style="margin: 0 0 1em;">
           <div class="step-circle">
             <div class="num">1</div>
-            <div class="label">APROVAÇÃO</div>
-            <div class="sub">do conceito (esta semana)</div>
+            <div class="label" style="font-size: 1.1em;">APROVAÇÃO</div>
+            <div class="sub" style="font-size: 0.95em;">do conceito</div>
           </div>
           <div class="step-circle">
             <div class="num">2</div>
-            <div class="label">PACOTE</div>
-            <div class="sub">definição + escopo</div>
+            <div class="label" style="font-size: 1.1em;">KICKOFF</div>
+            <div class="sub" style="font-size: 0.95em;">briefing TOTVS</div>
           </div>
           <div class="step-circle">
             <div class="num">3</div>
-            <div class="label">KICKOFF</div>
-            <div class="sub">briefing customização TOTVS</div>
+            <div class="label" style="font-size: 1.1em;">DESENVOLVIMENTO</div>
+            <div class="sub" style="font-size: 0.95em;">8 semanas</div>
           </div>
           <div class="step-circle">
             <div class="num">4</div>
-            <div class="label">19/10</div>
-            <div class="sub">LANÇAMENTO oficial</div>
+            <div class="label" style="font-size: 1.1em;">19/10</div>
+            <div class="sub" style="font-size: 0.95em;">LANÇAMENTO</div>
           </div>
         </div>
-        <div class="cta-wrap">
-          <a href="../" class="cta-big">▶ JOGAR PROTÓTIPO AGORA</a>
-        </div>
-      </div>
-    </section>
 
-    <!-- ============ SLIDE 11: CONTATO ============ -->
-    <section class="slide" style="justify-content: center;">
-      <div class="contact-card">
-        <div class="logo-big">REAL GAMES</div>
-        <div class="name">RODRIGO PANASSOLO</div>
-        <div class="role">DIRETOR · REAL GAMES STUDIO</div>
-        <div class="email">studio@therealgames.com.br</div>
-        <div class="footer-line">Real Games Studio · Entretenimento que conecta</div>
+        <div class="cta-wrap" style="margin-top: 1em;">
+          <a href="../" class="game-btn green" style="font-size: 1.5em; padding: 1.1em 3.2em;">▶ JOGAR PROTÓTIPO AGORA</a>
+        </div>
+
+        <div class="final-credits">
+          <div class="cr-name">RODRIGO PANASSOLO</div>
+          <div class="cr-role">DIRETOR · REAL GAMES STUDIO</div>
+          <div class="cr-email">studio@therealgames.com.br</div>
+        </div>
       </div>
     </section>
 
@@ -1503,7 +1762,7 @@
 
 <button id="nav-prev" class="disabled">‹</button>
 <button id="nav-next">›</button>
-<div id="indicator"><span class="cur">01</span> / 11</div>
+<div id="indicator"><span class="cur">01</span> / 10</div>
 
 <script>
 // ============================================================
@@ -1545,7 +1804,7 @@ requestAnimationFrame(tickLoader);
 // ============================================================
 // Slide deck navigation
 // ============================================================
-const TOTAL = 11;
+const TOTAL = 10;
 let current = 0;
 let isAnimating = false;
 
@@ -1574,6 +1833,7 @@ function goTo(i) {
   // re-trigger animations on new slide after transition
   setTimeout(() => {
     slides[current].classList.add('active');
+    if (typeof resetSlideInteractives === 'function') resetSlideInteractives(slides[current]);
     isAnimating = false;
   }, 450);
 }
@@ -1771,13 +2031,12 @@ function showFeedback(type, text) {
 // Wire up target zones (slide 2 and any future interactive)
 function wireTargetZones() {
   document.querySelectorAll('.target-zone').forEach(zone => {
-    let locked = false;
     zone.addEventListener('mouseenter', () => {
-      if (locked) return;
+      if (zone.classList.contains('locked')) return;
       audio.lockOn();
     });
     zone.addEventListener('click', (e) => {
-      if (locked) return;
+      if (zone.classList.contains('locked')) return;
       audio.init();
       const rect = zone.getBoundingClientRect();
       const cx = rect.left + rect.width/2;
@@ -1786,12 +2045,10 @@ function wireTargetZones() {
       const isCorrect = zone.dataset.correct === 'true';
       setTimeout(() => {
         if (isCorrect) {
-          locked = true;
-          zone.classList.add('hit-correct');
+          zone.classList.add('hit-correct', 'locked');
           spawnHitParticles(cx, cy, '#00ff88', 24);
           audio.hitRight();
           showFeedback('hit', 'TARGET DESTROYED');
-          // auto advance
           setTimeout(() => next(), 1400);
         } else {
           zone.classList.add('hit-wrong');
@@ -1805,6 +2062,73 @@ function wireTargetZones() {
   });
 }
 wireTargetZones();
+
+// ============================================================
+// Slide 8 — drag handle to enable "ESTOU PRONTO"
+// ============================================================
+const dragHandle = document.getElementById('dragHandle');
+const dtTrack = document.getElementById('dtTrack');
+if (dragHandle && dtTrack) {
+  let dragging = false;
+  function setHandle(pct) {
+    pct = Math.max(0, Math.min(1, pct));
+    dragHandle.style.left = (pct * 100) + '%';
+    const milestones = document.querySelectorAll('#dtTrack .milestone');
+    milestones.forEach((m, i) => {
+      const mPct = i / (milestones.length - 1);
+      m.classList.toggle('reached', pct >= mPct - 0.05);
+    });
+    const readyBtn = document.querySelector('.ready-btn');
+    if (readyBtn) {
+      readyBtn.classList.toggle('disabled-btn', pct < 0.92);
+    }
+  }
+  function startDrag(e) {
+    dragging = true;
+    dragHandle.classList.add('dragging');
+    audio.init();
+    e.preventDefault();
+  }
+  function moveDrag(e) {
+    if (!dragging) return;
+    const rect = dtTrack.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    setHandle((clientX - rect.left) / rect.width);
+  }
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    dragHandle.classList.remove('dragging');
+    audio.uiClick();
+  }
+  dragHandle.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', moveDrag);
+  document.addEventListener('mouseup', endDrag);
+  dragHandle.addEventListener('touchstart', startDrag, { passive: false });
+  document.addEventListener('touchmove', moveDrag, { passive: false });
+  document.addEventListener('touchend', endDrag);
+}
+
+function onReadyClick(btn) {
+  if (btn.classList.contains('disabled-btn')) return;
+  audio.hitRight();
+  next();
+}
+
+// Reset interactive elements when re-entering a slide (so user can replay)
+function resetSlideInteractives(slideEl) {
+  slideEl.querySelectorAll('.target-zone').forEach(z => {
+    z.classList.remove('hit-correct', 'hit-wrong', 'locked');
+  });
+  // Reset timeline drag state
+  const handle = slideEl.querySelector('.dt-handle');
+  if (handle) {
+    handle.style.left = '0%';
+    slideEl.querySelectorAll('.milestone').forEach(m => m.classList.remove('reached'));
+    const readyBtn = slideEl.querySelector('.ready-btn');
+    if (readyBtn) readyBtn.classList.add('disabled-btn');
+  }
+}
 
 // ============================================================
 // Subtle particle background (digital rain feel)
